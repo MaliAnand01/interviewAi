@@ -15,6 +15,22 @@ import java.util.List;
 public class InterviewaiApplication {
 
 	public static void main(String[] args) {
+		// Diagnostic startup logs to verify environment variables on Render
+		String mongoUri = System.getenv("MONGODB_URI");
+		String springMongoUri = System.getenv("SPRING_DATA_MONGODB_URI");
+		String geminiKey = System.getenv("GEMINI_API_KEY");
+		String port = System.getenv("PORT");
+		
+		System.out.println("=== PrepAI Env Diagnostics ===");
+		System.out.println("PORT from env: " + port);
+		System.out.println("MONGODB_URI present: " + (mongoUri != null && !mongoUri.isBlank()));
+		if (mongoUri != null && mongoUri.length() > 15) {
+			System.out.println("MONGODB_URI starts with: " + mongoUri.substring(0, 15));
+		}
+		System.out.println("SPRING_DATA_MONGODB_URI present: " + (springMongoUri != null && !springMongoUri.isBlank()));
+		System.out.println("GEMINI_API_KEY present: " + (geminiKey != null && !geminiKey.isBlank()));
+		System.out.println("==============================");
+
 		loadEnv();
 		SpringApplication.run(InterviewaiApplication.class, args);
 	}
