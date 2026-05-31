@@ -170,6 +170,7 @@ export default function Interview() {
   const [activeNav, setActiveNav] = useState('technical');
   const [pdfLoading, setPdfLoading] = useState(false);
   const [pdfError, setPdfError] = useState('');
+  const [showMobileAnalysis, setShowMobileAnalysis] = useState(false);
 
   useEffect(() => {
     if (interviewId) getReportById(interviewId).catch(() => {});
@@ -227,8 +228,8 @@ export default function Interview() {
           style={{ padding: '0.3rem 0.6rem', fontSize: '0.8rem', gap: '0.3rem', flexShrink: 0 }}>
           <ArrowLeft size={14} /> Back
         </button>
-        <div style={{ width: 1, height: 16, background: 'var(--border)', flexShrink: 0 }} />
-        <div style={{ display: 'flex', alignItems: 'center', gap: '0.45rem', flexShrink: 0 }}>
+        <div className="interview-header-divider" />
+        <div className="interview-header-logo">
           <div style={{ width: 24, height: 24, borderRadius: '6px', background: 'linear-gradient(135deg,#6366f1,#7c3aed)', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
             <BrainCircuit size={12} color="#fff" />
           </div>
@@ -239,24 +240,18 @@ export default function Interview() {
           {report.title || 'Interview Plan'}
         </p>
         {report.createdAt && (
-          <div style={{ display: 'flex', alignItems: 'center', gap: '0.3rem', color: 'var(--text-muted)', fontSize: '0.775rem', flexShrink: 0 }}>
+          <div className="interview-header-date">
             <Calendar size={12} />
             {new Date(report.createdAt).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' })}
           </div>
         )}
       </header>
 
-      {/* ═══ BODY — three columns ═════════════════════════════════════════════ */}
-      <div style={{ flex: 1, display: 'grid', gridTemplateColumns: '196px 1fr 256px', minHeight: 0 }}>
+      {/* ═══ BODY — responsive layout ════════════════════════════════════════ */}
+      <div className="interview-layout">
 
         {/* ── LEFT NAV ──────────────────────────────────────────────────────── */}
-        <aside style={{
-          borderRight: '1px solid var(--border)',
-          display: 'flex', flexDirection: 'column',
-          padding: '1rem 0.625rem',
-          position: 'sticky', top: 54,
-          height: 'calc(100vh - 54px)', overflowY: 'auto',
-        }}>
+        <aside className="interview-sidebar-left">
           <p style={{ fontSize: '0.62rem', fontWeight: 700, color: 'var(--text-muted)', textTransform: 'uppercase', letterSpacing: '0.1em', paddingLeft: '0.625rem', marginBottom: '0.5rem' }}>
             Sections
           </p>
@@ -312,7 +307,86 @@ export default function Interview() {
         </aside>
 
         {/* ── CENTER CONTENT ────────────────────────────────────────────────── */}
-        <main style={{ padding: '1.625rem 1.875rem', overflowY: 'auto', minWidth: 0 }}>
+        <main style={{ padding: '1.25rem 1.125rem', overflowY: 'auto', minWidth: 0 }}>
+          
+          {/* Mobile Swipable Tabs Navigation (visible only on mobile) */}
+          <div className="mobile-section-nav">
+            {NAV.map(({ id, label, Icon, color }) => {
+              const isActive = activeNav === id;
+              const cnt = id === 'technical' ? techQ.length : id === 'behavioral' ? behavQ.length : roadmap.length;
+              return (
+                <button
+                  key={id}
+                  id={`mobile-nav-${id}`}
+                  onClick={() => setActiveNav(id)}
+                  className={`mobile-section-btn${isActive ? ' active' : ''}`}
+                  style={isActive ? { borderLeft: `3px solid ${color}` } : {}}
+                >
+                  <Icon size={13} style={{ color: isActive ? color : 'inherit' }} />
+                  <span>{label} ({cnt})</span>
+                </button>
+              );
+            })}
+          </div>
+
+          {/* Expandable Match Analysis Summary for Mobile (visible only on mobile) */}
+          <div className="mobile-analysis-panel">
+            <div className="glass-card" style={{ padding: '0.75rem 1rem' }}>
+              <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
+                <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
+                  <Target size={16} style={{ color: (report.matchScore ?? 0) >= 80 ? '#10b981' : (report.matchScore ?? 0) >= 60 ? '#f59e0b' : '#ef4444' }} />
+                  <span style={{ fontSize: '0.8125rem', fontWeight: 700 }}>
+                    Profile Match:{' '}
+                    <span style={{ color: (report.matchScore ?? 0) >= 80 ? '#10b981' : (report.matchScore ?? 0) >= 60 ? '#f59e0b' : '#ef4444' }}>
+                      {report.matchScore ?? 0}%
+                    </span>
+                  </span>
+                </div>
+                <button 
+                  onClick={() => setShowMobileAnalysis(!showMobileAnalysis)}
+                  className="btn btn-ghost"
+                  style={{ padding: '0.25rem 0.5rem', fontSize: '0.72rem', gap: '0.2rem' }}
+                >
+                  {showMobileAnalysis ? 'Hide Match Details' : 'View Match Details'}
+                  <ChevronDown size={12} style={{ transform: showMobileAnalysis ? 'rotate(180deg)' : 'rotate(0)' }} />
+                </button>
+              </div>
+              
+              {showMobileAnalysis && (
+                <div style={{ marginTop: '0.75rem', paddingTop: '0.75rem', borderTop: '1px solid var(--border)', display: 'flex', flexDirection: 'column', gap: '0.75rem', animation: 'fadeIn 0.2s ease' }}>
+                  <ScoreRing score={report.matchScore ?? 0} />
+                  
+                  <div style={{ marginTop: '0.25rem' }}>
+                    <p style={{ fontSize: '0.75rem', fontWeight: 700, color: 'var(--text-muted)', textTransform: 'uppercase', letterSpacing: '0.07em', marginBottom: '0.4rem' }}>
+                      Skill Gaps ({gaps.length})
+                    </p>
+                    {gaps.length === 0 ? (
+                      <p style={{ fontSize: '0.75rem', color: 'var(--text-muted)' }}>No gaps identified 🎉</p>
+                    ) : (
+                      <div style={{ display: 'flex', flexDirection: 'column', gap: '0.25rem' }}>
+                        {sortedGaps.map((g, i) => (
+                          <SkillRow key={i} skill={g.skill} severity={g.severity} />
+                        ))}
+                      </div>
+                    )}
+                  </div>
+
+                  <button 
+                    id="mobile-download-resume-btn"
+                    onClick={handleDownloadPdf} 
+                    disabled={pdfLoading}
+                    className="btn btn-primary"
+                    style={{ width: '100%', justifyContent: 'center', fontSize: '0.775rem', padding: '0.5rem', marginTop: '0.25rem' }}
+                  >
+                    {pdfLoading
+                      ? <><div className="spinner" style={{ width: 12, height: 12 }} />Generating…</>
+                      : <><Sparkles size={13} />Download Resume PDF</>}
+                  </button>
+                </div>
+              )}
+            </div>
+          </div>
+
           {/* Section heading */}
           <div style={{ display: 'flex', alignItems: 'center', gap: '0.75rem', marginBottom: '1.375rem', paddingBottom: '1rem', borderBottom: '1px solid var(--border)' }}>
             <div style={{ width: 34, height: 34, borderRadius: '9px', flexShrink: 0,
@@ -354,13 +428,7 @@ export default function Interview() {
         </main>
 
         {/* ── RIGHT SIDEBAR ─────────────────────────────────────────────────── */}
-        <aside style={{
-          borderLeft: '1px solid var(--border)',
-          padding: '1rem 0.875rem',
-          display: 'flex', flexDirection: 'column', gap: '0.75rem',
-          position: 'sticky', top: 54,
-          height: 'calc(100vh - 54px)', overflowY: 'auto',
-        }}>
+        <aside className="interview-sidebar-right">
 
           {/* Match Score */}
           <SideCard title="Match Score" icon={FileText} accentColor="#818cf8">

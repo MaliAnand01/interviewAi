@@ -134,9 +134,9 @@ export default function Home() {
         <div style={{ position: 'absolute', bottom: '10%', left: '5%', width: 350, height: 350, borderRadius: '50%', background: 'radial-gradient(circle, rgba(124,58,237,0.05) 0%, transparent 70%)', filter: 'blur(60px)' }} />
       </div>
 
-      <div style={{ position: 'relative', zIndex: 1, maxWidth: 1100, margin: '0 auto', padding: '0 1.5rem' }}>
+      <div className="page-container">
         {/* Header */}
-        <header style={{ display: 'flex', alignItems: 'flex-start', justifyContent: 'space-between', padding: '2.5rem 0 2rem' }}>
+        <header className="app-header">
           <div style={{ display: 'flex', alignItems: 'center', gap: '0.75rem' }}>
             <div style={{ width: 36, height: 36, borderRadius: '9px', background: 'linear-gradient(135deg, #6366f1, #7c3aed)', display: 'flex', alignItems: 'center', justifyContent: 'center', boxShadow: '0 0 16px rgba(99,102,241,0.4)' }}>
               <BrainCircuit size={18} color="#fff" />
@@ -144,13 +144,13 @@ export default function Home() {
             <span style={{ fontSize: '1.25rem', fontWeight: 800, color: 'var(--text-primary)' }}>PrepAI</span>
           </div>
           <div style={{ display: 'flex', alignItems: 'center', gap: '0.875rem' }}>
-            <div style={{ textAlign: 'right' }}>
+            <div className="header-user-info">
               <p style={{ fontSize: '0.8125rem', color: 'var(--text-muted)', marginBottom: '0.1rem' }}>Signed in as</p>
               <p style={{ fontSize: '0.9375rem', fontWeight: 600, color: 'var(--text-primary)' }}>Hello, {user?.username}</p>
             </div>
             <button id="logout-btn" onClick={onLogout} className="btn btn-ghost" style={{ padding: '0.5rem 0.75rem' }} title="Logout">
               <LogOut size={16} />
-              <span style={{ fontSize: '0.8125rem' }}>Logout</span>
+              <span className="logout-btn-text">Logout</span>
             </button>
           </div>
         </header>
@@ -176,9 +176,9 @@ export default function Home() {
 
         {/* Main Card */}
         <div className="glass-card" style={{ padding: '0', overflow: 'hidden', marginBottom: '3rem' }}>
-          <div style={{ display: 'grid', gridTemplateColumns: '1fr 1px 1fr', gap: 0 }}>
+          <div className="home-split-container">
             {/* Left: Job Description */}
-            <div style={{ padding: '2rem' }}>
+            <div className="home-panel">
               <div style={{ display: 'flex', alignItems: 'center', gap: '0.625rem', marginBottom: '1.125rem' }}>
                 <div style={{ width: 32, height: 32, borderRadius: '8px', background: 'rgba(99,102,241,0.15)', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
                   <Briefcase size={16} style={{ color: 'var(--accent-light)' }} />
@@ -195,10 +195,10 @@ export default function Home() {
             </div>
 
             {/* Divider */}
-            <div style={{ background: 'var(--border)', alignSelf: 'stretch' }} />
+            <div className="home-divider" />
 
             {/* Right: Profile */}
-            <div style={{ padding: '2rem', display: 'flex', flexDirection: 'column', gap: '1.25rem' }}>
+            <div className="home-panel" style={{ display: 'flex', flexDirection: 'column', gap: '1.25rem' }}>
               <div style={{ display: 'flex', alignItems: 'center', gap: '0.625rem' }}>
                 <div style={{ width: 32, height: 32, borderRadius: '8px', background: 'rgba(16,185,129,0.12)', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
                   <User size={16} style={{ color: 'var(--success)' }} />
@@ -262,13 +262,13 @@ export default function Home() {
           </div>
 
           {/* Footer */}
-          <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', padding: '1.25rem 2rem', borderTop: '1px solid var(--border)', background: 'rgba(255,255,255,0.02)', flexWrap: 'wrap', gap: '1rem' }}>
-            <p style={{ fontSize: '0.8125rem', color: 'var(--text-muted)', display: 'flex', alignItems: 'center', gap: '0.375rem' }}>
+          <div className="home-card-footer">
+            <p className="home-card-footer-text">
               <TrendingUp size={13} />
               AI-Powered Strategy Generation • Approx 30s
             </p>
-            <button id="generate-btn" onClick={handleGenerate} disabled={loading} className="btn btn-primary"
-              style={{ fontSize: '0.9375rem', padding: '0.75rem 1.5rem' }}>
+            <button id="generate-btn" onClick={handleGenerate} disabled={loading} className="btn btn-primary home-card-footer-btn"
+              style={{ fontSize: '0.9375rem' }}>
               <Sparkles size={17} />
               Generate My Interview Strategy
             </button>
