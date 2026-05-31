@@ -1,115 +1,67 @@
-# PrepAI — AI-Powered Interview Preparation Platform
+# PrepAI — AI-Powered Interview Prep
 
-PrepAI is an intelligent platform designed to help job seekers prepare for interviews by analyzing target job descriptions against their resumes/profiles. It generates customized interview strategies, including technical questions (with intentions and model answers), behavioral questions, skill gap analyses, and a tailored day-by-day preparation roadmap.
-
----
-
-## Project Structure
-
-The project is split into two main directories:
-- **[interviewai_backend](file:///d:/Users/as/Desktop/interviewAi/interviewai_backend/)**: A Spring Boot application built with Java 17 and Maven, utilizing MongoDB for persistence, Spring Security for stateless JWT authentication, and the Google Gemini API for structured AI generation.
-- **[interviewai_frontend](file:///d:/Users/as/Desktop/interviewAi/interviewai_frontend/)**: A modern, interactive React web interface built with Vite, Tailwind CSS, and Axios.
+PrepAI is an AI platform that generates custom interview prep strategies (technical/behavioral questions, skill gap analysis, and roadmaps) by comparing a job description with a resume.
 
 ---
 
-## Tech Stack
-
-### Backend
-- **Framework**: Spring Boot 3.x / 4.x
-- **Language**: Java 17
-- **Database**: MongoDB (Atlas or Local)
-- **Security**: Spring Security + JWT
-- **AI Engine**: Google Gemini API (`gemini-2.5-flash`)
-- **PDF Processing**: Apache PDFBox 3.x & OpenHTMLtoPDF
-
-### Frontend
-- **Framework**: React 19 (Vite)
-- **Styling**: Tailwind CSS
-- **Routing**: React Router 7
-- **Icons**: Lucide React
-- **API Client**: Axios
+## Structure
+- **`interviewai_backend`**: Spring Boot API (Java 17 + MongoDB + Gemini API).
+- **`interviewai_frontend`**: React client (Vite + Tailwind CSS).
 
 ---
 
-## Local Setup & Environment Variables
+## Local Setup
 
-Make sure you have **Java 17+** and **Node.js 18+** installed.
-
-### 1. Backend Setup
-1. Navigate to the backend directory:
-   ```bash
-   cd interviewai_backend
-   ```
-2. Create your local environment configuration file:
+### 1. Backend
+1. Go to `interviewai_backend`
+2. Create `.env` file from `.env.example`:
    ```bash
    cp .env.example .env
    ```
-3. Populate `.env` with your credentials:
-   - `MONGODB_URI`: Your MongoDB connection string (e.g. MongoDB Atlas).
-   - `JWT_SECRET`: A secure string for signing JWT tokens.
-   - `GEMINI_API_KEY`: Your Google AI Studio API key.
-4. Compile the project:
-   ```bash
-   .\mvnw.cmd clean compile
-   ```
-5. Run the Spring Boot application:
+3. Configure the variables in `.env`:
+   - `MONGODB_URI`: MongoDB connection string
+   - `JWT_SECRET`: Secure token secret key
+   - `GEMINI_API_KEY`: Google Gemini API key
+4. Build and Run:
    ```bash
    .\mvnw.cmd spring-boot:run
    ```
-   *The server runs on port `8080` by default.*
 
-### 2. Frontend Setup
-1. Navigate to the frontend directory:
-   ```bash
-   cd interviewai_frontend
-   ```
+### 2. Frontend
+1. Go to `interviewai_frontend`
 2. Install dependencies:
    ```bash
    npm install
    ```
-3. Create your local environment configuration file:
-   ```bash
-   cp .env.example .env.local
+3. Create `.env.local` file:
+   ```env
+   VITE_API_URL=http://localhost:8080
    ```
-4. Run the Vite development server:
+4. Run:
    ```bash
    npm run dev
    ```
-   *The client runs on `http://localhost:5173` by default.*
 
 ---
 
-## Security & Best Practices
+## Deployment (Free Tier)
 
-- **Credentials Safety**: All secrets (MongoDB URI, JWT secret, and Google Gemini API key) have been removed from the static source files and are loaded dynamically via environment variables. Do not check `.env` files into Git.
-- **Error Handling**: Exception messages are sanitized before returning to the frontend to avoid information disclosure.
-- **CORS Config**: CORS settings are dynamic and read from backend properties, preventing hardcoded local origins in production.
+### 1. Backend on Render (Docker)
+Render will build and host the Spring Boot container using the provided `Dockerfile`.
+1. Create a Web Service on **Render**.
+2. Connect your GitHub repository.
+3. Set **Root Directory** to `interviewai_backend`.
+4. Select **Docker** runtime and the **Free** tier.
+5. Add these environment variables:
+   - `MONGODB_URI`: *Your Atlas Mongo string*
+   - `MONGODB_DB`: `interview-master`
+   - `JWT_SECRET`: *Your JWT token signing key*
+   - `GEMINI_API_KEY`: *Your Google Gemini AI key*
+   - `CORS_ALLOWED_ORIGINS`: `https://your-frontend.vercel.app` (update after deploying frontend)
 
----
-
-## Deployment Guide
-
-### Database
-- Use **MongoDB Atlas** for a fully managed, free-tier cloud database. Configure the backend `MONGODB_URI` environment variable to point to your Atlas cluster.
-
-### Backend Deployment
-Deploy the backend Java JAR on platforms supporting Java runtimes (e.g. **Render**, **Railway**, **Heroku**, or a VPS like **DigitalOcean**):
-1. Package the application to a runnable JAR:
-   ```bash
-   .\mvnw.cmd clean package -DskipTests
-   ```
-2. Set the following environment variables in your deployment dashboard:
-   - `MONGODB_URI`: Your production MongoDB URI.
-   - `JWT_SECRET`: A strong, randomly generated production secret.
-   - `GEMINI_API_KEY`: Your Gemini API key.
-   - `CORS_ALLOWED_ORIGINS`: The URL of your deployed frontend (e.g., `https://prepai.vercel.app`).
-   - `PORT`: Usually provided by the hosting provider.
-
-### Frontend Deployment
-Deploy the React frontend on static hosts (e.g. **Vercel**, **Netlify**, or **Cloudflare Pages**):
-1. Connect your repository to Vercel/Netlify.
-2. Configure build settings:
-   - **Build Command**: `npm run build`
-   - **Publish Directory**: `dist`
-3. Configure the environment variables:
-   - `VITE_API_URL`: The URL of your deployed backend (e.g., `https://prepai-backend.onrender.com`).
+### 2. Frontend on Vercel
+1. Create a project on **Vercel** and import your GitHub repo.
+2. Set **Root Directory** to `interviewai_frontend`.
+3. Add environment variable:
+   - `VITE_API_URL`: *Your deployed Render backend URL*
+4. Click **Deploy**.
